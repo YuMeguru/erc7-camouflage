@@ -1,4 +1,4 @@
-# VIGIL-07 · ERC-7 Camouflage Simulator
+# 7型影像干扰器模拟器
 
 模仿彩六 Vigil 的 ERC-7，Vibe Coding 出来的半成品。
 
