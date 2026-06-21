@@ -1,0 +1,186 @@
+/* =============================================================================
+ * HUD.css — 战术 HUD overlay
+ * -----------------------------------------------------------------------------
+ * 设计意图：
+ * - 等宽字体 + 全大写 + 战术绿 + 极少装饰（军用夜视屏幕）
+ * - 外发光合并到 1 层，避免 neon outer glow default ban
+ * - prefers-reduced-motion 下 REC blink 静止
+ * - BEM 命名：.hud / .hud-corner--{tl,tr,bl,br} / .hud-status__dot--{standby,armed,error}
+ * ============================================================================= */
+
+.hud {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: var(--z-hud);
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+  color: var(--ink-primary);
+  text-shadow: var(--glow-soft);
+}
+
+.hud-corner {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.hud-corner--tl { top: var(--space-5);    left: var(--space-5);  }
+.hud-corner--tr { top: var(--space-5);    right: var(--space-5); align-items: flex-end; }
+.hud-corner--bl { bottom: var(--space-5); left: var(--space-5);  }
+.hud-corner--br { bottom: var(--space-5); right: var(--space-5); align-items: flex-end; }
+
+.hud-line {
+  font-size: var(--text-2xs);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--leading-tight);
+  white-space: nowrap;
+}
+
+.hud-line__label  { color: var(--ink-dim);      margin-right: var(--space-2); }
+.hud-line__value  { color: var(--ink-secondary);                                    }
+.hud-line__value--accent   { color: var(--ink-warn);                            }
+.hud-line__value--critical { color: var(--ink-critical); text-shadow: var(--glow-alert); }
+
+.hud-status {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.hud-status__dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--signal-standby);
+  box-shadow: var(--glow-tactical), var(--inset-edge);
+  flex-shrink: 0;
+  transition: background var(--duration-base) var(--ease-out),
+              box-shadow var(--duration-base) var(--ease-out);
+}
+
+.hud-status__dot--armed {
+  background: var(--signal-armed);
+  box-shadow: var(--glow-alert), var(--inset-edge);
+}
+
+.hud-status__dot--error {
+  background: var(--signal-error);
+  box-shadow: var(--glow-warn), var(--inset-edge);
+}
+
+.hud-rec {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.hud-rec__dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--signal-armed);
+  animation: rec-blink var(--duration-blink) var(--ease-in-out) infinite;
+}
+
+@keyframes rec-blink {
+  0%, 49%   { opacity: 1;    box-shadow: var(--glow-alert); }
+  50%, 100% { opacity: 0.25; box-shadow: none;             }
+}
+
+.hud-signal {
+  display: flex;
+  gap: 2px;
+  align-items: flex-end;
+}
+
+.hud-signal__bar {
+  width: 4px;
+  background: var(--signal-standby);
+  box-shadow: var(--glow-soft);
+}
+
+.hud-signal__bar--dim {
+  background: var(--ink-dim);
+  box-shadow: none;
+}
+
+.hud-signal__bar:nth-child(1) { height: 4px;  }
+.hud-signal__bar:nth-child(2) { height: 8px;  }
+.hud-signal__bar:nth-child(3) { height: 12px; }
+.hud-signal__bar:nth-child(4) { height: 16px; }
+
+.hud-crosshair {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 24px;
+  height: 24px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  border: 1px solid var(--ink-dim);
+  pointer-events: none;
+}
+
+.hud-crosshair::before,
+.hud-crosshair::after {
+  content: '';
+  position: absolute;
+  background: var(--ink-dim);
+}
+
+.hud-crosshair::before {
+  top: 50%;
+  left: -8px;
+  right: -8px;
+  height: 1px;
+  transform: translateY(-50%);
+}
+
+.hud-crosshair::after {
+  left: 50%;
+  top: -8px;
+  bottom: -8px;
+  width: 1px;
+  transform: translateX(-50%);
+}
+
+.hud-timestamp {
+  font-variant-numeric: tabular-nums;
+  font-size: var(--text-2xs);
+  color: var(--ink-secondary);
+}
+
+.hud-fps {
+  font-variant-numeric: tabular-nums;
+  font-size: var(--text-2xs);
+  color: var(--ink-warn);
+}
+
+.hud-error {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: var(--space-5) var(--space-6);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-alert);
+  box-shadow: var(--glow-alert);
+  font-size: var(--text-sm);
+  color: var(--ink-critical);
+  letter-spacing: var(--tracking-wider);
+  text-align: center;
+  pointer-events: auto;
+  max-width: min(90vw, 480px);
+}
+
+/* reduced-motion 兜底 */
+@media (prefers-reduced-motion: reduce) {
+  .hud-rec__dot,
+  .hud-status__dot {
+    animation: none;
+    transition: none;
+  }
+}

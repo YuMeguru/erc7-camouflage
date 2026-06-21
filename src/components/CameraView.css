@@ -1,0 +1,44 @@
+/* =============================================================================
+ * CameraView.css — 摄像头 + 渲染层
+ * -----------------------------------------------------------------------------
+ * - 视频 / canvas 占满视口
+ * - 视频 mirror 翻转（自拍效果）
+ * - 100dvh 防止 iOS Safari 地址栏跳
+ * - 容器 isolation 隔离合成层，避免污染父级
+ * - source canvas 仅用于 MediaPipe getImageData，DOM 中不需要可见
+ * ============================================================================= */
+
+.camera-view {
+  position: relative;
+  width: 100%;
+  height: 100dvh;
+  overflow: hidden;
+  background: var(--bg-void);
+  isolation: isolate;
+}
+
+.camera-view__video,
+.camera-view__canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.camera-view__video {
+  transform: scaleX(-1);
+  object-fit: cover;
+  z-index: var(--z-camera);
+}
+
+.camera-view__canvas--source {
+  /* source canvas 仅用于 getImageData 采样，DOM 中不可见 */
+  display: none;
+}
+
+.camera-view__canvas--output {
+  z-index: var(--z-effects);
+  pointer-events: none;
+}

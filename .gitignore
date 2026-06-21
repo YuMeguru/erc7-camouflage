@@ -1,0 +1,28 @@
+# Node / 构建产物
+node_modules
+dist
+build
+coverage
+playwright-report
+test-results
+*.log
+.DS_Store
+
+# 编辑器配置
+.vscode
+.idea
+*.swp
+*.swo
+
+# Harness / Sprint / Debug（不进公共仓库）
+.claude/
+.sprint/
+.dbg/
+debug-*.md
+CLAUDE.md
+AGENTS.md
+PLAN_HARNESS.md
+SPEC_HARNESS.md
+
+# TS 增量构建缓存
+*.tsbuildinfo

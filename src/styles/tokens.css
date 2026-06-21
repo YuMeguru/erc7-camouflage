@@ -1,0 +1,113 @@
+/* =============================================================================
+ * ERC-7 Camouflage Simulator — Design Tokens
+ * -----------------------------------------------------------------------------
+ * 军用夜视 HUD 调性：
+ * - 战术绿 / 警报红 / 琥珀黄
+ * - 深黑底（off-black，避免 pure #000 死硬）
+ * - JetBrains Mono 全大写，等宽
+ * - 锐利边角（rounded 0~2px）
+ *
+ * 全部使用 OKLCH，便于在不同设备/浏览器上一致呈现。
+ * 单一文件改完颜色，全站自动跟随。
+ * ============================================================================= */
+
+:root {
+  color-scheme: dark;
+
+  /* --- 颜色：背景层级 ------------------------------------------------------ */
+  --bg-void:        oklch(0.04 0 0);   /* 主页面底色（近黑但不纯黑） */
+  --bg-deep:        oklch(0.07 0 0);   /* HUD 面板底色 */
+  --bg-elevated:    oklch(0.10 0 0);   /* 浮层 / modal 底色 */
+  --bg-overlay:     oklch(0.04 0 0 / 0.72);  /* 半透明遮挡层 */
+
+  /* --- 颜色：HUD 描边 ------------------------------------------------------ */
+  --border-hud:      oklch(0.866 0.295 142.495 / 0.32);
+  --border-hud-soft: oklch(0.866 0.295 142.495 / 0.16);
+  --border-faint:    oklch(0.866 0.295 142.495 / 0.08);
+  --border-alert:    oklch(0.629 0.259 27.305 / 0.55);
+  --border-warn:     oklch(0.876 0.169 92.363 / 0.55);
+
+  /* --- 颜色：文字 --------------------------------------------------------- */
+  --ink-primary:    oklch(0.92 0.18 142);           /* 主文字（亮绿） */
+  --ink-secondary:  oklch(0.866 0.295 142.495);     /* 次文字（战术绿） */
+  --ink-dim:        oklch(0.866 0.295 142.495 / 0.55);
+  --ink-critical:   oklch(0.629 0.259 27.305);      /* 警报红 */
+  --ink-warn:       oklch(0.876 0.169 92.363);      /* 琥珀黄 */
+  --ink-inverse:    oklch(0.08 0 0);                /* 反色（深底） */
+
+  /* --- 颜色：信号灯 ------------------------------------------------------- */
+  --signal-standby: oklch(0.866 0.295 142.495);    /* 绿：系统就绪 */
+  --signal-armed:   oklch(0.629 0.259 27.305);     /* 红：ERC-7 激活 */
+  --signal-error:   oklch(0.876 0.169 92.363);     /* 黄：错误 / 警告 */
+
+  /* --- 颜色：发光（外发光合并到 1 层，节制的内发光补一层） ------------- */
+  --glow-tactical:  0 0 0.5rem oklch(0.866 0.295 142.495 / 0.55);
+  --glow-alert:     0 0 0.5rem oklch(0.629 0.259 27.305 / 0.65);
+  --glow-warn:      0 0 0.5rem oklch(0.876 0.169 92.363 / 0.55);
+  --glow-soft:      0 0 0.25rem oklch(0.866 0.295 142.495 / 0.32);
+  --inset-edge:     inset 0 1px 0 oklch(0.866 0.295 142.495 / 0.18);
+
+  /* --- 字体 --------------------------------------------------------------- */
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  --font-weight-regular: 400;
+  --font-weight-bold:    700;
+
+  /* --- 字号（固定档位；HUD 信息密度稳定） -------------------------------- */
+  --text-2xs: 0.625rem;     /* 10px — 极小标签 */
+  --text-xs:  0.6875rem;    /* 11px — HUD 标签 */
+  --text-sm:  0.8125rem;    /* 13px — HUD 主信息 */
+  --text-base:0.9375rem;    /* 15px — 正文 */
+  --text-lg:  1.125rem;     /* 18px — 副标题 */
+
+  /* --- 字距 / 行高 ------------------------------------------------------- */
+  --tracking-wide: 0.08em;
+  --tracking-wider: 0.18em;
+  --tracking-widest: 0.32em;
+  --leading-tight: 1.1;
+  --leading-normal: 1.4;
+
+  /* --- 间距（4px 网格） --------------------------------------------------- */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-8: 3rem;
+  --space-10: 4rem;
+
+  /* --- 圆角（HUD 锐利：0~2px） ------------------------------------------ */
+  --radius-none: 0;
+  --radius-xs:   2px;
+  --radius-pill: 9999px;
+
+  /* --- 动画 ------------------------------------------------------------- */
+  --duration-fast:   120ms;
+  --duration-base:   200ms;
+  --duration-slow:   400ms;
+  --duration-blink:  1200ms;
+  --ease-out:        cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out:     cubic-bezier(0.65, 0, 0.35, 1);
+
+  /* --- z-index 体系（语义化，禁止散乱 999 / 9999） --------------------- */
+  --z-base:         0;
+  --z-camera:       1;   /* 摄像头视频层 */
+  --z-effects:      2;   /* 特效渲染层 */
+  --z-hud:          10;  /* HUD overlay */
+  --z-modal:        20;  /* 错误 / 启动遮罩 */
+  --z-toast:        30;  /* 提示 */
+  --z-debug:        40;  /* debug 面板 */
+
+  /* --- 视口 ------------------------------------------------------------- */
+  --viewport-min-h: 100dvh;  /* iOS Safari 地址栏不跳 */
+}
+
+/* --- prefers-reduced-motion：节制动效 ----------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-fast: 0ms;
+    --duration-base: 0ms;
+    --duration-slow: 0ms;
+    --duration-blink: 0ms;
+  }
+}

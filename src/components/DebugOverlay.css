@@ -1,0 +1,51 @@
+/* =============================================================================
+ * DebugOverlay.css — 调试面板（仅 dev 环境）
+ * -----------------------------------------------------------------------------
+ * - 屏幕左上角（不影响主 HUD）
+ * - 等宽字号小，等宽对齐数字
+ * - 仅在 dev 渲染（见 DebugOverlay.tsx）
+ * ============================================================================= */
+
+.debug-overlay {
+  position: absolute;
+  top: var(--space-3);
+  left: var(--space-3);
+  padding: var(--space-3);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-hud);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  color: var(--ink-secondary);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+  z-index: var(--z-debug);
+  pointer-events: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-width: 60vw;
+  max-height: 80vh;
+  overflow: auto;
+}
+
+.debug-overlay__title {
+  color: var(--ink-warn);
+  font-weight: var(--font-weight-bold);
+  margin-bottom: var(--space-2);
+}
+
+.debug-overlay__row {
+  display: flex;
+  gap: var(--space-2);
+  white-space: nowrap;
+}
+
+.debug-overlay__key {
+  color: var(--ink-dim);
+  min-width: 10ch;
+}
+
+.debug-overlay__val {
+  color: var(--ink-primary);
+  font-variant-numeric: tabular-nums;
+}
