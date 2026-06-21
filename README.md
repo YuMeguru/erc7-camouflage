@@ -1,6 +1,6 @@
 # VIGIL-07 · ERC-7 Camouflage Simulator
 
-浏览器里把 R6 Siege 干员 Vigil 的 ERC-7 影像干扰器还原出来。摄像头采集画面，本地跑 AI 识别手势，握拳就能"隐身"。
+模仿彩六 Vigil 的 ERC-7，Vibe Coding 出来的半成品。
 
 ## 当前状态：半成品
 
