@@ -1,90 +1,90 @@
-# 7型影像干扰器模拟器
+# ERC-7 Camouflage Simulator
 
-模仿彩六 Vigil 的 ERC-7，Vibe Coding 出来的半成品。
+A half-done clone of Vigil's ERC-7 device from Rainbow Six Siege. Vibe coded.
 
-## 当前状态：半成品
+[中文版本 / Chinese](./README.zh-CN.md)
 
-写到这里得先交代一句，别被 README 骗了。
+## Status: half-finished
 
-- 头部识别经常缺。Pose Landmarker 对低头、侧脸、戴帽场景很挑，肩膀以上的关键点经常漏掉。
-- 人物追踪在两个人交叠或快速换位时不稳定，IOU 一掉人就跟丢了，得等下一帧重新分配 ID。
-- 手势判定的阈值是拍脑袋定的。手背对着摄像头、灯光偏冷偏暖都会让它误判，握拳半秒也容易触发。
+I should warn you before you try this. The README is not going to tell you what's broken.
 
-代码跑得起来，本地 demo 凑合能玩。但拿给别人体验大概率会出状况。
+- Head pose drops constantly. Pose Landmarker hates tilted heads, profile shots, and hats. Keypoints above the shoulders go missing more than I'd like.
+- Person tracking falls apart when two people cross paths or swap positions quickly. The IOU drops and IDs need reassignment on the next frame.
+- Gesture thresholds were picked by feel. Back-of-hand, weird lighting, partial fist. All of these will trigger it.
 
-## 玩法
+The code runs. The local demo is okay for a few minutes. Hand it to someone else and you'll see the cracks.
 
-打开页面，浏览器要摄像头权限。任一人做"摊手 → 握拳"动作就会切换这个人的隐身状态。
+## How to play
 
-HUD 右上角的点会从绿变红，绿是待机，红是 ERC-7 激活中。
+Open the page, allow camera access. Anyone who does the open palm → fist gesture switches that person's cloaking state. The dot in the top right of the HUD goes from green (standby) to red (ERC-7 active).
 
-5 秒冷却是写死的，防误触双击卡在隐身态出不来。
+The 5-second cooldown is hardcoded so a fast double-fist can't lock you in.
 
-## 技术栈
+## Stack
 
-- React 18 + TypeScript（strict 模式）
-- Vite 5 打包
-- Zustand 5 管理状态
-- MediaPipe Tasks Vision（Pose + Hand Landmarker，模型放 `public/models/` 本地加载，断网也能跑）
-- Canvas 2D 做背景采样和人像合成，WebGL 做 vignette 和白噪
-- Vitest（13 个文件 / 59 个测试）+ Playwright e2e
+- React 18, TypeScript in strict mode
+- Vite 5 for the build
+- Zustand 5 for state
+- MediaPipe Tasks Vision, Pose and Hand Landmarkers. Models live in `public/models/` and load locally, so the app works offline.
+- Canvas 2D for background sampling and person compositing. WebGL for vignette and grain.
+- Vitest (13 files, 59 tests) plus Playwright for end-to-end.
 
-## 项目结构
+## Layout
 
 ```
 src/
   components/
-    CameraView.tsx     主组件：摄像头 + 渲染循环
-    HUD.tsx            战术 HUD overlay
-    StatusDot.tsx      ERC-7 激活状态点
-    DebugOverlay.tsx   调试面板，dev only
+    CameraView.tsx     main component, camera + render loop
+    HUD.tsx            tactical HUD overlay
+    StatusDot.tsx      ERC-7 active state dot
+    DebugOverlay.tsx   debug panel, dev only
   engines/
-    BackgroundManager.ts  滚动背景采样，中位数滤波
-    Compositor.ts         把人像区域替换成缓存背景
-    EffectsLayer.ts       vignette + 白噪
-    HandStateAnalyzer.ts  手势状态机：NONE / OPEN_PALM / FIST
-    PersonTracker.ts      IOU 多目标追踪
-    erc7Tracking.ts       pose → snapshot → 隐身候选聚合
-    handAssignment.ts     手到 person 距离匹配
+    BackgroundManager.ts  rolling background sampling, median filter
+    Compositor.ts         replaces person region with cached background
+    EffectsLayer.ts       vignette + grain
+    HandStateAnalyzer.ts  gesture state machine: NONE / OPEN_PALM / FIST
+    PersonTracker.ts      IOU multi-target tracker
+    erc7Tracking.ts       pose to snapshot to cloaking candidate aggregation
+    handAssignment.ts     hand to person distance matching
   hooks/
-    useCamera.ts          getUserMedia 生命周期
-    usePoseEngine.ts      Pose Landmarker 加载 + 推理
-    useHandEngine.ts      Hand Landmarker 加载 + 推理
-    useRenderLoop.ts      requestAnimationFrame 循环
+    useCamera.ts          getUserMedia lifecycle
+    usePoseEngine.ts      Pose Landmarker load + inference
+    useHandEngine.ts      Hand Landmarker load + inference
+    useRenderLoop.ts      requestAnimationFrame loop
   store/
-    useGameStore.ts       Zustand：mode / persons / fps / erc7Active
+    useGameStore.ts       Zustand: mode / persons / fps / erc7Active
   styles/
     tokens.css            OKLCH design tokens
   utils/
-    telemetry.ts          调试事件总线
+    telemetry.ts          debug event bus
   types/
-    mp.ts                 MediaPipe 类型
+    mp.ts                 MediaPipe types
     index.ts
 ```
 
-## 开发
+## Development
 
 ```bash
 npm install
-npm run dev       # 默认 http://localhost:5173
-npm test --run    # 单元测试
-npm run build     # 生产构建
+npm run dev       # http://localhost:5173
+npm test --run    # unit tests
+npm run build     # production build
 npm run preview
 npx playwright install chromium
 npx playwright test
 ```
 
-## 设计系统
+## Design tokens
 
-颜色、间距、字号、z-index 集中在 [`src/styles/tokens.css`](src/styles/tokens.css)，全部 OKLCH。改一处 token 整站联动，不用满世界翻 hex 值。
+Colors, spacing, font sizes, and z-index live in [`src/styles/tokens.css`](src/styles/tokens.css), all in OKLCH. Change one token and the whole site follows. No more hunting through hex values.
 
-## 浏览器兼容
+## Browser support
 
-Chrome / Edge 119+ 跑得最稳。Safari macOS 和 iOS 17+ 能用，但 iOS 必须 HTTPS。Firefox 120+ 基本能跑，偶发掉帧。
+Chrome and Edge 119+ run the smoothest. Safari on macOS and iOS 17+ works, but iOS needs HTTPS. Firefox 120+ mostly works, with occasional frame drops.
 
-## 隐私
+## Privacy
 
-摄像头画面、AI 推理、模型加载全在浏览器里。没有后端，没有数据库，没有埋点。刷新页面就清空。
+Camera frames, AI inference, and model loading all happen in the browser. There's no server, no analytics. Refresh the page and the state is gone.
 
 ## License
 
